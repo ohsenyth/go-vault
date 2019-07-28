@@ -1,4 +1,5 @@
-package main
+// package main
+package vault
 
 import (
 	// "context"
@@ -6,6 +7,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-kit/kit/endpoint"
 	"golang.org/x/net/context"
 
 	"golang.org/x/crypto/bcrypt"

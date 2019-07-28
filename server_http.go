@@ -1,7 +1,6 @@
 package vault
 
 import (
-	"context"
 	"net/http"
 
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -14,7 +13,7 @@ func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
 		ctx,
 		endpoints.HashEndpoint,
 		decodeHashRequest,
-		endcodeResponse,
+		encodeResponse,
 	))
 	m.Handle("/validate", httptransport.NewServer(
 		ctx,
