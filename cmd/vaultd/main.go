@@ -13,6 +13,8 @@ import (
 	"vault/pb"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"github.com/juju/ratelimit"
+	ratelimitkit "github.com/go-kit/kit/ratelimit"
 )
 
 func main() {
@@ -31,8 +33,16 @@ func main() {
 		errChan <- fmt.Errorf("%s", <-c)
 	}()
 
+	rlbucket := ratelimit.NewBucket(1*time.Second, 5)
+
 	hashEndpoint := vault.MakeHashEndpoint(srv)
+	{
+		hashEndpoint = ratelimitkit.NewTokenBucketThrottler (rlbucket, time.Sleep) (hashEndpoint)
+	}
 	validateEndpoint := vault.MakeValidateEndpoint(srv)
+	{
+		validateEndpoint = ratelimitkit.NewTokenBucketThrottler (rlbucket, time.Sleep) (validateEndpoint)
+	}
 	endpoints := vault.Endpoints{
 		HashEndPoint: hashEndpoint,
 		ValidateEndpoint: validateEndpoint
